@@ -24,7 +24,12 @@ namespace AoC2024.Workers.Day01
 
         protected override long WorkOneStar_Implementation()
         {
-            return _locations.TotalDistances;
+            return _locations.GetTotalDistances();
+        }
+
+        protected override long WorkTwoStars_Implementation()
+        {
+            return _locations.GetSimilarityScore();
         }
     }
 }

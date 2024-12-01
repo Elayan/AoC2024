@@ -30,6 +30,7 @@ namespace AoC2024_Tests
         public void Sample01()
         {
             TestOneStar(new AoC2024.Workers.Day01.LocationsComparator(), GetSamplePath(1), 11);
+            TestTwoStars(new AoC2024.Workers.Day01.LocationsComparator(), GetSamplePath(1), 31);
         }
     }
 }
