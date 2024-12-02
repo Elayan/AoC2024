@@ -32,5 +32,11 @@ namespace AoC2024_Tests
             TestOneStar(new AoC2024.Workers.Day01.LocationsComparator(), GetSamplePath(1), 11);
             TestTwoStars(new AoC2024.Workers.Day01.LocationsComparator(), GetSamplePath(1), 31);
         }
+
+        [Test]
+        public void Sample02()
+        {
+            TestOneStar(new AoC2024.Workers.Day02.RedNoseAnalysis(), GetSamplePath(2), 2);
+        }
     }
 }
