@@ -17,5 +17,10 @@ namespace AoC2024.Workers.Day02
         {
             return _data.GetValidReportCount();
         }
+
+        protected override long WorkTwoStars_Implementation()
+        {
+            return _data.GetValidReportCountWithDampener();
+        }
     }
 }

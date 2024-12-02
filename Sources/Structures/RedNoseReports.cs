@@ -25,58 +25,59 @@ namespace AoC2024.Structures
         {
             var sb = new StringBuilder();
             sb.AppendLine("=== RED NOSE REPORTS ===");
-            foreach (var report in _reports)
+            for (int i = 0; i < _reports.Count; i++)
             {
-                sb.AppendLine(string.Join(" ", report));
+                sb.Append($"[{i:000}] ");
+                sb.AppendLine(string.Join(" ", _reports[i]));
             }
             return sb.ToString();
         }
 
         public long GetValidReportCount()
         {
-            long count = 0;
-            foreach(var report in _reports)
+            var validList = new List<int>();
+            for (int i = 0; i < _reports.Count; i++)
             {
-                if (IsValid(report))
-                    count++;
+                if (ValidateReport(i, _reports[i]))
+                    validList.Add(i);
             }
-            return count;
+            Logger.Log($"Valid reports: {string.Join(", ", validList)}");
+            return validList.Count;
         }
 
-        private bool IsValid(List<int> report)
+        private bool ValidateReport(int reportIndex, List<int> report)
         {
             if (report.Count < 2)
                 return true;
 
-            Logger.Log($"> Validating report {string.Join(" ", report)}");
-
-            int start = 0;
-            int step = 1;
-            int end = report.Count - 1;
-
+            Logger.Log(Environment.NewLine);
+            Logger.Log($"===== Validating report #{reportIndex:000}: {string.Join(" ", report)}");
+            var list = new List<int>(report);
             if (report[0] > report[1])
             {
                 // if report is decreasing, we check the list as increasing from the end
-                Logger.Log(">> Report is detected as decreasing.");
-                start = report.Count - 1;
-                step = -1;
-                end = 0;
+                list.Reverse();
+                Logger.Log($"Report is detected as decreasing, reversing: {string.Join(" ", list)}");
             }
 
-            Logger.Log($">>> Start {start}, end {end}, step {step}");
-            for (int i = start, next = start + step; i != end; i += step, next += step)
+            for (int i = 0; i < list.Count - 1; i++)
             {
-                var difference = report[next] - report[i];
-                Logger.Log($">>> Difference between {report[i]} and {report[next]} = {difference}");
+                var difference = list[i + 1] - list[i];
+                Logger.Log($"Difference between {list[i]} and {list[i + 1]} = {difference}");
                 if (difference <= 0 || difference > 3)
                 {
-                    Logger.Log($">> Invalidated.");
+                    Logger.Log($">> [x] Invalidated.");
                     return false; // report is changing direction, or moving too fast
                 }
             }
 
-            Logger.Log(">> Validated.");
+            Logger.Log(">> [✓] Validated.");
             return true;
+        }
+
+        internal long GetValidReportCountWithDampener()
+        {
+            return 0;
         }
     }
 }

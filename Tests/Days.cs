@@ -20,9 +20,9 @@ namespace AoC2024_Tests
             Assert.That(work, Is.EqualTo(expectedResult), $"One Star returned {work}, expected {expectedResult}.");
         }
 
-        private void TestTwoStars(IWorker worker, string dataPath, long expectedResult)
+        private void TestTwoStars(IWorker worker, string dataPath, long expectedResult, SeverityLevel logLevel = SeverityLevel.Always)
         {
-            var work = worker.WorkTwoStars(dataPath, SeverityLevel.Always);
+            var work = worker.WorkTwoStars(dataPath, logLevel);
             Assert.That(work, Is.EqualTo(expectedResult), $"Two Stars returned {work}, expected {expectedResult}.");
         }
 
@@ -37,6 +37,14 @@ namespace AoC2024_Tests
         public void Day02()
         {
             TestOneStar(new AoC2024.Workers.Day02.RedNoseAnalysis(), GetDataPath(2), 383);
+            TestTwoStars(new AoC2024.Workers.Day02.RedNoseAnalysis(), GetDataPath(2), 436);
+        }
+
+        [Test]
+        public void Day02b()
+        {
+            TestOneStar(new AoC2024.Workers.Day02.RedNoseAnalysis(), GetDataPath(2, "b"), 524);
+            TestTwoStars(new AoC2024.Workers.Day02.RedNoseAnalysis(), GetDataPath(2, "b"), 566);
         }
     }
 }
