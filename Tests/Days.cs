@@ -14,9 +14,9 @@ namespace AoC2024_Tests
             return Path.Combine(TestContext.CurrentContext.TestDirectory, "Data", "Days", $"day{day:00}{append}");
         }
 
-        private void TestOneStar(IWorker worker, string dataPath, long expectedResult)
+        private void TestOneStar(IWorker worker, string dataPath, long expectedResult, SeverityLevel logLevel = SeverityLevel.Always)
         {
-            var work = worker.WorkOneStar(dataPath, SeverityLevel.Always);
+            var work = worker.WorkOneStar(dataPath, logLevel);
             Assert.That(work, Is.EqualTo(expectedResult), $"One Star returned {work}, expected {expectedResult}.");
         }
 
@@ -45,6 +45,12 @@ namespace AoC2024_Tests
         {
             TestOneStar(new AoC2024.Workers.Day02.RedNoseAnalysis(), GetDataPath(2, "b"), 524);
             TestTwoStars(new AoC2024.Workers.Day02.RedNoseAnalysis(), GetDataPath(2, "b"), 569);
+        }
+
+        [Test]
+        public void Day03()
+        {
+            TestOneStar(new AoC2024.Workers.Day03.Multiplicator(), GetDataPath(3), 155955228);
         }
     }
 }
