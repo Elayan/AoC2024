@@ -51,6 +51,7 @@ namespace AoC2024_Tests
         public void Day03()
         {
             TestOneStar(new AoC2024.Workers.Day03.Multiplicator(), GetDataPath(3), 155955228);
+            TestTwoStars(new AoC2024.Workers.Day03.Multiplicator(), GetDataPath(3), 100189366);
         }
     }
 }

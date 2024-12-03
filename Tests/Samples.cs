@@ -43,7 +43,8 @@ namespace AoC2024_Tests
         [Test]
         public void Sample03()
         {
-            TestOneStar(new AoC2024.Workers.Day03.Multiplicator(), GetSamplePath(3), 161);
+            TestOneStar(new AoC2024.Workers.Day03.Multiplicator(), GetSamplePath(3), 322);
+            TestTwoStars(new AoC2024.Workers.Day03.Multiplicator(), GetSamplePath(3), 209);
         }
     }
 }
