@@ -55,5 +55,71 @@ namespace AoC2024.Workers.Day04
                 && _map.GetCell(aPos).Content == 'A'
                 && _map.GetCell(sPos).Content == 'S';
         }
+
+        protected override long WorkTwoStars_Implementation()
+        {
+            long xmasCount = 0L;
+            for (int r = 0; r < _map.RowCount; r++)
+            {
+                for (int c = 0; c < _map.ColCount; c++)
+                {
+                    xmasCount += FindCrossMas(r, c);
+                }
+            }
+            return xmasCount;
+        }
+
+        private long FindCrossMas(int r, int c)
+        {
+            if (_map.GetCell(r, c).Content != 'A')
+                return 0;
+
+            Logger.Log($"A found at {r}-{c}");
+            return FindDiagonalCrossMS(r, c) ? 1 : 0;
+        }
+
+        // actually we shouldn't look for plus-like crosses...
+        private bool FindStraightCrossMS(int r, int c)
+        {
+            var topPos = new Coordinates(r - 1, c);
+            var botPos = new Coordinates(r + 1, c);
+            var leftPos = new Coordinates(r, c - 1);
+            var rightPos = new Coordinates(r, c + 1);
+            if (FindCrossMS(topPos, botPos, leftPos, rightPos))
+            {
+                Logger.Log($"> found Straight Cross");
+                return true;
+            }
+            return false;
+        }
+
+        private bool FindDiagonalCrossMS(int r, int c)
+        {
+            var topLeftPos = new Coordinates(r - 1, c - 1);
+            var botRightPos = new Coordinates(r + 1, c + 1);
+            var topRight = new Coordinates(r - 1, c + 1);
+            var botLeft = new Coordinates(r + 1, c - 1);
+            if (FindCrossMS(topLeftPos, botRightPos, topRight, botLeft))
+            {
+                Logger.Log($"> found Diagonal Cross");
+                return true;
+            }
+            return false;
+        }
+
+        // crossing AB and CD
+        private bool FindCrossMS(Coordinates A, Coordinates B, Coordinates C, Coordinates D)
+        {
+            return _map.IsCoordinateInMap(A) && _map.IsCoordinateInMap(B)
+                && _map.IsCoordinateInMap(C) && _map.IsCoordinateInMap(D)
+                && IsWritingMS(A, B) && IsWritingMS(C, D);
+        }
+
+        private bool IsWritingMS(Coordinates A, Coordinates B)
+        {
+            var cellA = _map.GetCell(A).Content;
+            var cellB = _map.GetCell(B).Content;
+            return cellA == 'M' && cellB == 'S' || cellA == 'S' && cellB == 'M';
+        }
     }
 }

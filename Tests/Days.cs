@@ -58,6 +58,7 @@ namespace AoC2024_Tests
         public void Day04()
         {
             TestOneStar(new AoC2024.Workers.Day04.WordSearcher(), GetDataPath(4), 2549);
+            TestTwoStars(new AoC2024.Workers.Day04.WordSearcher(), GetDataPath(4), 2003);
         }
     }
 }
