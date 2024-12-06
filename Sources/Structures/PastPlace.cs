@@ -17,7 +17,13 @@ namespace AoC2024.Structures
 
         protected override string LogTitle => "=== PAST PLACE MAP ===";
 
-        public void LetTheGuardWalk()
+        public enum GuardStopReason
+        {
+            Exited,
+            Looped
+        }
+
+        public GuardStopReason LetTheGuardWalk()
         {
             var guardStart = AllCells.First(c => c.Content == CellType.GuardStart).Coordinates;
             Logger.Log($"Guard starts walking at {guardStart}");
@@ -37,7 +43,7 @@ namespace AoC2024.Structures
                 if (!IsCoordinateInMap(nextPos))
                 {
                     Logger.Log("Guard exited the area!");
-                    return; // guard exited!
+                    return GuardStopReason.Exited; // guard exited!
                 }
 
                 if (IsCoordinateInMap(nextPos))
@@ -46,7 +52,7 @@ namespace AoC2024.Structures
                     if (nextCell.VisitedInDirection[curDir])
                     {
                         Logger.Log("End of ronde!");
-                        return; // end of ronde!
+                        return GuardStopReason.Looped; // end of ronde!
                     }
 
                     if (nextCell.Content != CellType.Block)
@@ -61,6 +67,12 @@ namespace AoC2024.Structures
                 Logger.Log($"Impossible to walk on cell at {nextPos}");
                 curDir = curDir.GetRightTurn(); // turn right and try again to walk
             }
+        }
+
+        internal void CleanWalk()
+        {
+            foreach (var cell in AllCells)
+                cell.CleanVisits();
         }
     }
 
@@ -77,7 +89,8 @@ namespace AoC2024.Structures
                 { CardinalDirection.West, false },
                 { CardinalDirection.East, false },
             };
-        public bool IsVisited => VisitedInDirection.Values.Any(v => v == true);
+        public bool IsVisited => VisitCount > 0;
+        public int VisitCount => VisitedInDirection.Values.Count(v => v == true);
 
         public override string ToString()
         {
@@ -103,6 +116,16 @@ namespace AoC2024.Structures
                 default: return ".";
             }
         }
+
+        internal void CleanVisits()
+        {
+            VisitedInDirection[CardinalDirection.North] = false;
+            VisitedInDirection[CardinalDirection.South] = false;
+            VisitedInDirection[CardinalDirection.West] = false;
+            VisitedInDirection[CardinalDirection.East] = false;
+        }
+
+        public void SetContent(CellType type) => Content = type;
     }
 
     public enum CellType

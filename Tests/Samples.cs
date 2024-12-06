@@ -58,6 +58,7 @@ namespace AoC2024_Tests
         public void Sample06()
         {
             TestOneStar(new AoC2024.Workers.Day06.PastPlaceAnalizer(), GetSamplePath(6), 41);
+            TestTwoStars(new AoC2024.Workers.Day06.PastPlaceAnalizer(), GetSamplePath(6), 6);
         }
     }
 }
