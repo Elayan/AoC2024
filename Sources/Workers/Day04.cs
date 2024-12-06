@@ -2,8 +2,6 @@
 using AoCTools.Frame.TwoDimensions.Map;
 using AoCTools.Loggers;
 using AoCTools.Workers;
-using System.Text;
-using System.Text.RegularExpressions;
 
 namespace AoC2024.Workers.Day04
 {

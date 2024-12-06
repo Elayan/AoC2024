@@ -53,5 +53,11 @@ namespace AoC2024_Tests
             TestOneStar(new AoC2024.Workers.Day04.WordSearcher(), GetSamplePath(4), 18);
             TestTwoStars(new AoC2024.Workers.Day04.WordSearcher(), GetSamplePath(4), 9);
         }
+
+        [Test]
+        public void Sample06()
+        {
+            TestOneStar(new AoC2024.Workers.Day06.PastPlaceAnalizer(), GetSamplePath(6), 41);
+        }
     }
 }
