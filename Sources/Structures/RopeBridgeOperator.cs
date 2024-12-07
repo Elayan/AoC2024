@@ -6,6 +6,7 @@ namespace AoC2024.Structures
     {
         Addition,
         Multiplication,
+        Concatenation,
         None
     }
 
@@ -48,6 +49,8 @@ namespace AoC2024.Structures
                         sb.Append(" + ");
                     else if (op == OperationAction.Multiplication)
                         sb.Append(" x ");
+                    else if (op == OperationAction.Concatenation)
+                        sb.Append(" || ");
                 }
 
                 sb.Append(Values[i]);
@@ -56,9 +59,9 @@ namespace AoC2024.Structures
             return sb.ToString();
         }
 
-        public bool ComputeOperation()
+        public bool ComputeOperation(bool useConcatenation)
         {
-            var operation = ComputeOperation_Impl(OperationAction.None, -1L, Values);
+            var operation = ComputeOperation_Impl(OperationAction.None, -1L, Values, useConcatenation);
             if (operation == null)
                 return false;
 
@@ -66,7 +69,7 @@ namespace AoC2024.Structures
             return true;
         }
 
-        public List<OperationAction> ComputeOperation_Impl(OperationAction curAction, long curResult, IEnumerable<long> valuesLeft)
+        public List<OperationAction> ComputeOperation_Impl(OperationAction curAction, long curResult, IEnumerable<long> valuesLeft, bool useConcatenation)
         {
             if (curAction != OperationAction.None)
             {
@@ -90,10 +93,14 @@ namespace AoC2024.Structures
             var newValue = ApplyAction(curAction, curResult, nextValue);
             var newValuesLeft = valuesLeft.Skip(1);
 
-            var result = ComputeOperation_Impl(OperationAction.Addition, newValue, newValuesLeft);
+            var result = ComputeOperation_Impl(OperationAction.Addition, newValue, newValuesLeft, useConcatenation);
             if (result == null)
             {
-                result = ComputeOperation_Impl(OperationAction.Multiplication, newValue, newValuesLeft);
+                result = ComputeOperation_Impl(OperationAction.Multiplication, newValue, newValuesLeft, useConcatenation);
+            }
+            if (result == null && useConcatenation)
+            {
+                result = ComputeOperation_Impl(OperationAction.Concatenation, newValue, newValuesLeft, useConcatenation);
             }
 
             if (result == null)
@@ -115,6 +122,8 @@ namespace AoC2024.Structures
                     return leftValue + rightValue;
                 case OperationAction.Multiplication:
                     return leftValue * rightValue;
+                case OperationAction.Concatenation:
+                    return long.Parse($"{leftValue}{rightValue}");
                 default:
                     throw new Exception($"Operation not implemented");
             }

@@ -72,6 +72,7 @@ namespace AoC2024_Tests
         public void Day07()
         {
             TestOneStar(new AoC2024.Workers.Day07.RopeBridge(), GetDataPath(7), 10741443549536);
+            TestTwoStars(new AoC2024.Workers.Day07.RopeBridge(), GetDataPath(7), 500335179214836);
         }
     }
 }

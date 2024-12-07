@@ -19,11 +19,21 @@ namespace AoC2024.Workers.Day07
 
         protected override long WorkOneStar_Implementation()
         {
+            return Work(false);
+        }
+
+        protected override long WorkTwoStars_Implementation()
+        {
+            return Work(true);
+        }
+
+        private long Work(bool useThirdOperator)
+        {
             var total = 0L;
             foreach (var op in _operators)
             {
                 Logger.Log(op.ToString());
-                var operationFound = op.ComputeOperation();
+                var operationFound = op.ComputeOperation(useThirdOperator);
                 if (!operationFound)
                 {
                     Logger.Log("[x] Invalid operator.");

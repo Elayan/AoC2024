@@ -65,6 +65,7 @@ namespace AoC2024_Tests
         public void Sample07()
         {
             TestOneStar(new AoC2024.Workers.Day07.RopeBridge(), GetSamplePath(7), 3749);
+            TestTwoStars(new AoC2024.Workers.Day07.RopeBridge(), GetSamplePath(7), 11387);
         }
     }
 }
