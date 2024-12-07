@@ -1,8 +1,6 @@
 ﻿using AoC2024.Structures;
-using AoCTools.Frame.Map.Extensions;
 using AoCTools.Loggers;
 using AoCTools.Workers;
-using System.Linq;
 using System.Text;
 
 namespace AoC2024.Workers.Day06

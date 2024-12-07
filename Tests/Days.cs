@@ -1,4 +1,4 @@
-﻿using AoCTools.Loggers;
+using AoCTools.Loggers;
 using AoCTools.Workers;
 using NUnit.Framework;
 using System.IO;
@@ -62,7 +62,7 @@ namespace AoC2024_Tests
         }
 
         [Test]
-        public void Day06()
+        public void Day06() // 17s
         {
             TestOneStar(new AoC2024.Workers.Day06.PastPlaceAnalizer(), GetDataPath(6), 4973);
             TestTwoStars(new AoC2024.Workers.Day06.PastPlaceAnalizer(), GetDataPath(6), 1482);
