@@ -32,5 +32,24 @@ namespace AoC2024.Workers.Day05
             }
             return total;
         }
+
+        protected override long WorkTwoStars_Implementation()
+        {
+            var total = 0L;
+            foreach (var s in _specs.Series)
+            {
+                Logger.Log($"Serie {s}");
+                if (s.Validate(_specs.Constraints))
+                {
+                    Logger.Log($"[x] No fix needed.");
+                    continue;
+                }
+
+                s.Fix(_specs.Constraints);
+                total += s.GetMiddlePage();
+                Logger.Log($"[✓] Done => total = {total}");
+            }
+            return total;
+        }
     }
 }

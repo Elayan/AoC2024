@@ -58,6 +58,7 @@ namespace AoC2024_Tests
         public void Sample05()
         {
             TestOneStar(new AoC2024.Workers.Day05.Printer(), GetSamplePath(5), 143);
+            TestTwoStars(new AoC2024.Workers.Day05.Printer(), GetSamplePath(5), 123);
         }
 
         [Test]

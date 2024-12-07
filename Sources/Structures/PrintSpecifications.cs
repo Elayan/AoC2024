@@ -41,7 +41,7 @@ namespace AoC2024.Structures
 
         internal long GetMiddlePage() => Pages[Pages.Length / 2];
 
-        internal bool Validate(PrintConstraint[] constraints)
+        public bool Validate(PrintConstraint[] constraints)
         {
             for (int i = 0; i < Pages.Length; i++)
             {
@@ -58,6 +58,26 @@ namespace AoC2024.Structures
                 }
             }
             return true;
+        }
+
+        public void Fix(PrintConstraint[] constraints)
+        {
+            for (int i = 0; i < Pages.Length; i++)
+            {
+                for (int j = i + 1; j < Pages.Length; j++)
+                {
+                    for (int c = 0; c < constraints.Length; c++)
+                    {
+                        if (constraints[c].Before == Pages[j] && constraints[c].After == Pages[i])
+                        {
+                            var memo = Pages[i];
+                            Pages[i] = Pages[j];
+                            Pages[j] = memo;
+                            Logger.Log($"Page {Pages[j]} should be after {Pages[i]}, swapping => {this}");
+                        }
+                    }
+                }
+            }
         }
     }
 
