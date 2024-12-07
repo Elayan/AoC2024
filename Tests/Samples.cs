@@ -55,6 +55,12 @@ namespace AoC2024_Tests
         }
 
         [Test]
+        public void Sample05()
+        {
+            TestOneStar(new AoC2024.Workers.Day05.Printer(), GetSamplePath(5), 143);
+        }
+
+        [Test]
         public void Sample06()
         {
             TestOneStar(new AoC2024.Workers.Day06.PastPlaceAnalizer(), GetSamplePath(6), 41);

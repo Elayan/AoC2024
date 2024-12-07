@@ -38,6 +38,9 @@
     <None Update="Data\Days\day04">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Data\Days\day05">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Data\Days\day06">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -54,6 +57,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Data\Samples\sample04">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Data\Samples\sample05">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Data\Samples\sample06">
