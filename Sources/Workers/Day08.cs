@@ -35,19 +35,12 @@ namespace AoC2024.Workers.Day08
                         var coord1 = antennas[i].Coordinates;
                         var coord2 = antennas[j].Coordinates;
 
-                        var centerRow = (coord1.Row + coord2.Row) / 2.0;
-                        var centerCol = (coord1.Col + coord2.Col) / 2.0;
-
-                        var sym1 = new Coordinates(
-                            (long)(3.0 * coord1.Row - 2.0 * centerRow),
-                            (long)(3.0 * coord1.Col - 2.0 * centerCol));
+                        var sym1 = Coordinates.GetSymmetric(coord1, coord2);
                         var sym1inmap = _map.IsCoordinateInMap(sym1);
-                        var sym2 = new Coordinates(
-                            (long)(3.0 * coord2.Row - 2.0 * centerRow),
-                            (long)(3.0 * coord2.Col - 2.0 * centerCol));
+                        var sym2 = Coordinates.GetSymmetric(coord2, coord1);
                         var sym2inmap = _map.IsCoordinateInMap(sym2);
 
-                        Logger.Log($"Antinodes of {coord1} and {coord2} (center ({centerRow}-{centerCol})) are {sym1}{(sym1inmap ? "" : "[out]")} and {sym2}{(sym2inmap ? "" : "[out]")}.");
+                        Logger.Log($"Antinodes of {coord1} and {coord2} are {sym1}{(sym1inmap ? "" : "[out]")} and {sym2}{(sym2inmap ? "" : "[out]")}.");
 
                         if (sym1inmap)
                             antinodes.Add(sym1);
