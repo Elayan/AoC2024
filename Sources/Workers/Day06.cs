@@ -2,6 +2,7 @@
 using AoCTools.Loggers;
 using AoCTools.Workers;
 using System.Text;
+using CellType = AoC2024.Structures.PastPlace.CellType;
 
 namespace AoC2024.Workers.Day06
 {

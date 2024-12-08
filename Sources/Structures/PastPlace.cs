@@ -2,6 +2,7 @@
 using AoCTools.Frame.TwoDimensions;
 using AoCTools.Frame.TwoDimensions.Map.Abstracts;
 using AoCTools.Loggers;
+using CellType = AoC2024.Structures.PastPlace.CellType;
 
 namespace AoC2024.Structures
 {
@@ -128,10 +129,13 @@ namespace AoC2024.Structures
         public void SetContent(CellType type) => Content = type;
     }
 
-    public enum CellType
+    namespace PastPlace
     {
-        Free,
-        Block,
-        GuardStart
+        public enum CellType
+        {
+            Free,
+            Block,
+            GuardStart
+        }
     }
 }
