@@ -78,8 +78,11 @@ namespace AoC2024_Tests
         [Test]
         public void Sample08()
         {
-            TestOneStar(new AoC2024.Workers.Day08.Antennas(), GetSamplePath(8, "_simple"), 2);
+            TestOneStar(new AoC2024.Workers.Day08.Antennas(), GetSamplePath(8, "_a"), 2);
             TestOneStar(new AoC2024.Workers.Day08.Antennas(), GetSamplePath(8), 14);
+
+            TestTwoStars(new AoC2024.Workers.Day08.Antennas(), GetSamplePath(8, "_b"), 9);
+            TestTwoStars(new AoC2024.Workers.Day08.Antennas(), GetSamplePath(8), 34);
         }
     }
 }

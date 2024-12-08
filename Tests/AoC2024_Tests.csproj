@@ -74,7 +74,10 @@
     <None Update="Data\Samples\sample08">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Data\Samples\sample08_simple">
+    <None Update="Data\Samples\sample08_a">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Data\Samples\sample08_b">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>

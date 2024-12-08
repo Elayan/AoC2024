@@ -86,6 +86,7 @@ namespace AoC2024_Tests
         public void Day08()
         {
             TestOneStar(new AoC2024.Workers.Day08.Antennas(), GetDataPath(8), 329);
+            TestTwoStars(new AoC2024.Workers.Day08.Antennas(), GetDataPath(8), 1190);
         }
     }
 }

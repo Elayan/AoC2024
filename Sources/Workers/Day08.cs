@@ -54,6 +54,54 @@ namespace AoC2024.Workers.Day08
             return antinodes.Distinct().Count();
         }
 
+        protected override long WorkTwoStars_Implementation()
+        {
+            var antennasByFrequency = _map.GetAntennasByFrequency();
+            LogAntennasByFrequency(antennasByFrequency);
+
+            var antinodes = new List<Coordinates>();
+            foreach (var pair in antennasByFrequency)
+            {
+                var frequency = pair.Key;
+                var antennas = pair.Value;
+                Logger.Log($"Finding antinodes for {antennas.Length} antennas with frequency {frequency}");
+
+                for (int i = 0; i < antennas.Length; i++)
+                {
+                    for (int j = i + 1; j < antennas.Length; j++)
+                    {
+                        var coord1 = antennas[i].Coordinates;
+                        var coord2 = antennas[j].Coordinates;
+
+                        // toward coord1
+                        Coordinates reference = coord2;
+                        Coordinates antinode = coord1;
+                        do
+                        {
+                            antinodes.Add(antinode);
+                            var nextAntinode = Coordinates.GetSymmetric(reference, antinode);
+                            reference = antinode;
+                            antinode = nextAntinode;
+                        } while (_map.IsCoordinateInMap(antinode));
+
+                        // toward coord2
+                        reference = coord1;
+                        antinode = coord2;
+                        do
+                        {
+                            antinodes.Add(antinode);
+                            var nextAntinode = Coordinates.GetSymmetric(reference, antinode);
+                            reference = antinode;
+                            antinode = nextAntinode;
+                        } while (_map.IsCoordinateInMap(antinode));
+                    }
+                }
+            }
+
+            LogMapWithAntinodes(antinodes);
+            return antinodes.Distinct().Count();
+        }
+
         private void LogMapWithAntinodes(List<Coordinates> antinodes)
         {
             if (Logger.ShowAboveSeverity > SeverityLevel.Low)
