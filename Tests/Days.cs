@@ -88,5 +88,11 @@ namespace AoC2024_Tests
             TestOneStar(new AoC2024.Workers.Day08.Antennas(), GetDataPath(8), 329);
             TestTwoStars(new AoC2024.Workers.Day08.Antennas(), GetDataPath(8), 1190);
         }
+
+        [Test]
+        public void Day09()
+        {
+            TestOneStar(new AoC2024.Workers.Day09.Defragmentation(), GetDataPath(9), -1); // 6355777438536 too high
+        }
     }
 }
