@@ -92,7 +92,7 @@ namespace AoC2024_Tests
         [Test]
         public void Day09()
         {
-            TestOneStar(new AoC2024.Workers.Day09.Defragmentation(), GetDataPath(9), -1); // 85587065099 < x < 6355777438536
+            TestOneStar(new AoC2024.Workers.Day09.Defragmentation(), GetDataPath(9), 6353658451014); // 85587065099 < x < 6355777438536
         }
     }
 }

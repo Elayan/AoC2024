@@ -89,6 +89,7 @@ namespace AoC2024_Tests
         public void Sample09()
         {
             TestOneStar(new AoC2024.Workers.Day09.Defragmentation(), GetSamplePath(9), 1928);
+            TestOneStar(new AoC2024.Workers.Day09.Defragmentation(), GetSamplePath(9, "_b"), 11);
         }
     }
 }

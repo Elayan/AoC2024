@@ -17,7 +17,7 @@ namespace AoC2024.Workers.Day09
         protected override long WorkOneStar_Implementation()
         {
             _disk.Defragment();
-            Logger.Log("Defragmented", SeverityLevel.Always);
+            Logger.Log($">>> NONO: Defragmented, {_disk.DefragmentedClusters.Count(c => c.Size == 0)} empty clusters", SeverityLevel.Always);
             LogDisk();
             return _disk.GetDefragmentedChecksum_Raw();
             //return _disk.GetDefragmentedChecksum();
