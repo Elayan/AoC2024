@@ -71,6 +71,13 @@ public class Disk
                 Logger.Log("End of defragmentation!");
                 break;
             }
+
+            if (Clusters[ite].Size == 0)
+            {
+                Logger.Log($"Cluster {ite} is empty, skipping.");
+                ite++;
+                continue;
+            }
             
             if (Clusters[ite].Label != -1)
             {
