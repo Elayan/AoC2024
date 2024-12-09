@@ -11,10 +11,11 @@ public class Cluster
 
     public long GetChecksum(int offset)
     {
-        // checksum = 0*Label + 1*Label + 2*Label + ... + (Size-1)*Label
-        // checksum = (0 + 1 + 2 + ... + (Size-1)) * Label
-        // checksum = Somme Des (Size - 1) Premiers Entiers * Label
-        return (NonoMath.SumFirstIntegers(offset + (long)Size - 1L) - NonoMath.SumFirstIntegers(offset - 1L)) * Label;
+        // Because total checksum is sum first integers * cell[id].Label
+        // the checksum for a cluster
+        // is the sum between offset and (offset + Size - 1)
+        // multiplied by Label
+        return NonoMath.SumIntegersBetween(offset, offset + Size - 1) * Label;
     }
 
     public override string ToString()
@@ -123,6 +124,17 @@ public class Disk
         return checksum;
     }
 
+    public long GetDefragmentedChecksum_Raw()
+    {
+        var developed = ClustersToDevelopedString(DefragmentedClusters);
+        var checksum = 0L;
+        for (int i = 0; i < developed.Length; i++)
+        {
+            checksum += i * (developed[i] - 48);
+        }
+        return checksum;
+    }
+
     public override string ToString()
     {
         return ClustersToString(Clusters, "DISK");
@@ -155,7 +167,12 @@ public class Disk
     {
         var sb = new StringBuilder();
         sb.AppendLine($"=== {title} ===");
-        sb.AppendLine(string.Join("", clusters.Select(c => string.Join("", Enumerable.Repeat(c.Label == -1 ? "." : c.Label.ToString(), c.Size)))));
+        sb.AppendLine(ClustersToDevelopedString(clusters));
         return sb.ToString();
+    }
+
+    private string ClustersToDevelopedString(List<Cluster> clusters)
+    {
+        return string.Join("", clusters.Select(c => string.Join("", Enumerable.Repeat(c.Label == -1 ? "." : c.Label.ToString(), c.Size))));
     }
 }

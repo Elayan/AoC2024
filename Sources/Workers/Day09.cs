@@ -19,7 +19,8 @@ namespace AoC2024.Workers.Day09
             _disk.Defragment();
             Logger.Log("Defragmented", SeverityLevel.Always);
             LogDisk();
-            return _disk.GetDefragmentedChecksum();
+            return _disk.GetDefragmentedChecksum_Raw();
+            //return _disk.GetDefragmentedChecksum();
         }
 
         private void LogDisk()
