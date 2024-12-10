@@ -137,82 +137,6 @@ public class Disk
         }
     }
 
-    [Obsolete]
-    public void Defragment_Old()
-    {
-        int ite = 0;
-        int lastFileClusterIdx = Clusters.Count - 1;
-        if (Clusters[lastFileClusterIdx].Label == -1)
-        {
-            // shouldn't happen, but better be sure
-            Logger.Log("Last cluster is empty... ok?");
-            lastFileClusterIdx--;
-        }
-        int lastFileClusterSize = Clusters[lastFileClusterIdx].Size;
-        
-        while (true)
-        {
-            if (ite >= lastFileClusterIdx)
-            {
-                var lastDefragmentedCluster = DefragmentedClusters.Last();
-                if (lastDefragmentedCluster.Label == Clusters[lastFileClusterIdx].Label)
-                {
-                    lastDefragmentedCluster.Size += lastFileClusterSize;
-                    Logger.Log($"Merging what's left of file cluster {lastDefragmentedCluster.Label}, size {lastFileClusterSize} => total {lastDefragmentedCluster.Size}");
-                }
-                else
-                {
-                    DefragmentedClusters.Add(new Cluster { Size = lastFileClusterSize, Label = Clusters[ite].Label });
-                    Logger.Log($"Preserving what's left of file cluster {Clusters[ite].Label}, size {lastFileClusterSize}");
-                }
-                
-                Logger.Log("End of defragmentation!");
-                break;
-            }
-
-            if (Clusters[ite].Size == 0)
-            {
-                Logger.Log($"Cluster {ite} is empty, skipping.");
-                ite++;
-                continue;
-            }
-            
-            if (Clusters[ite].Label != -1)
-            {
-                DefragmentedClusters.Add(Clusters[ite]);
-                Logger.Log($"Preserving file cluster {Clusters[ite].Label} of size {Clusters[ite].Size}");
-                ite++;
-                continue;
-            }
-            
-            var curFreeClusterSize = Clusters[ite].Size;
-            Logger.Log($"Filling up free cluster of size {curFreeClusterSize}");
-            while (lastFileClusterSize < curFreeClusterSize)
-            {
-                DefragmentedClusters.Add(new Cluster { Size = lastFileClusterSize, Label = Clusters[lastFileClusterIdx].Label});
-                curFreeClusterSize -= lastFileClusterSize;
-                Logger.Log($"> adding entire cluster {Clusters[lastFileClusterIdx].Label} of size {lastFileClusterSize} => remaining: {curFreeClusterSize}");
-                
-                lastFileClusterIdx -= 2;
-                lastFileClusterSize = Clusters[lastFileClusterIdx].Size;
-            }
-            
-            DefragmentedClusters.Add(new Cluster { Size = curFreeClusterSize, Label = Clusters[lastFileClusterIdx].Label });
-            var memoLastSize = lastFileClusterSize;
-            lastFileClusterSize -= curFreeClusterSize;
-            Logger.Log($"> adding part cluster {Clusters[lastFileClusterIdx].Label}, {curFreeClusterSize} out of {memoLastSize}, leaving {lastFileClusterSize}");
-
-            if (lastFileClusterSize == 0)
-            {
-                Logger.Log($"Cluster {Clusters[lastFileClusterIdx].Label} is now empty, skipping.");
-                lastFileClusterIdx -= 2;
-                lastFileClusterSize = Clusters[lastFileClusterIdx].Size;
-            }
-
-            ite++;
-        }
-    }
-
     public long GetDefragmentedChecksum()
     {
         long checksum = 0L;
@@ -226,17 +150,6 @@ public class Disk
             Logger.Log($"Cluster {cluster.Label} of size {cluster.Size} checksum with offset {offset} = {clusterChecksum} => checksum = {checksum}");
         }
 
-        return checksum;
-    }
-
-    public long GetDefragmentedChecksum_Raw()
-    {
-        var developed = ClustersToDevelopedString(DefragmentedClusters);
-        var checksum = 0L;
-        for (int i = 0; i < developed.Length; i++)
-        {
-            checksum += i * (developed[i] - 48);
-        }
         return checksum;
     }
 
