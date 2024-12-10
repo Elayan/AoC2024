@@ -16,14 +16,23 @@ namespace AoC2024.Workers.Day09
 
         protected override long WorkOneStar_Implementation()
         {
+            LogDisk();
             _disk.Defragment();
             Logger.Log($">>> NONO: Defragmented, {_disk.DefragmentedClusters.Count(c => c.Size == 0)} empty clusters", SeverityLevel.Always);
-            LogDisk();
-            return _disk.GetDefragmentedChecksum_Raw();
-            //return _disk.GetDefragmentedChecksum();
+            LogDefragmentedDisk();
+            //return _disk.GetDefragmentedChecksum_Raw();
+            return _disk.GetDefragmentedChecksum();
         }
 
         private void LogDisk()
+        {
+            if (Logger.ShowAboveSeverity > SeverityLevel.Low)
+                return;
+            
+            Logger.Log(_disk.ToDevelopedString());
+        }
+
+        private void LogDefragmentedDisk()
         {
             if (Logger.ShowAboveSeverity > SeverityLevel.Low)
                 return;

@@ -90,8 +90,8 @@ namespace AoC2024_Tests
         {
             TestOneStar(new AoC2024.Workers.Day09.Defragmentation(), GetSamplePath(9), 1928);
             TestOneStar(new AoC2024.Workers.Day09.Defragmentation(), GetSamplePath(9, "_b"), 11);
-            //TestOneStar(new AoC2024.Workers.Day09.Defragmentation(), GetSamplePath(9, "_c"), 641243);
-            TestOneStar(new AoC2024.Workers.Day09.Defragmentation(), GetSamplePath(9, "_d"), 1);
+            TestOneStar(new AoC2024.Workers.Day09.Defragmentation(), GetSamplePath(9, "_c"), 641243);
+            TestOneStar(new AoC2024.Workers.Day09.Defragmentation(), GetSamplePath(9, "_d"), 91);
         }
     }
 }
