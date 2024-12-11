@@ -100,6 +100,7 @@ namespace AoC2024_Tests
         public void Sample11()
         {
             TestOneStar(new AoC2024.Workers.Day11.QuanticStoneBlinker(), GetSamplePath(11), 55312);
+            TestTwoStars(new AoC2024.Workers.Day11.QuanticStoneBlinker(), GetSamplePath(11), 65601038650482);
         }
     }
 }
