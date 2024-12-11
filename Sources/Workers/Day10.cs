@@ -21,11 +21,19 @@ public class TrailFinder : WorkerBase
         return _map.TrailScore;
     }
 
+    protected override long WorkTwoStars_Implementation()
+    {
+        _map.FindTrails();
+        LogMap();
+        return _map.TrailRating;
+    }
+
     private void LogMap()
     {
         if (Logger.ShowAboveSeverity > SeverityLevel.Low)
             return;
         
-        Logger.Log(_map.ToVisitString());
+        Logger.Log(_map.ToInfoString());
+        Logger.Log(_map.ToTrailString(6));
     }
 }

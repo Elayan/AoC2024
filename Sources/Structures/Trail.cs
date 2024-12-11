@@ -18,6 +18,7 @@ public class TrailNode : MapCell<char>
     public bool Visited { get; set; }
     private List<TrailNode> _reachableNines = new List<TrailNode>();
     public int Score => _reachableNines.Count;
+    public int Rating { get; private set; } = 0;
 
     public override string ToString()
     {
@@ -29,7 +30,7 @@ public class TrailNode : MapCell<char>
         return Visited ? Content.ToString() : ".";
     }
 
-    public void RateTheTrail(TrailNode nineNode = null)
+    public void ScoreTheTrail(TrailNode nineNode = null)
     {
         if (nineNode == null && Content == '9')
             nineNode = this;
@@ -40,9 +41,21 @@ public class TrailNode : MapCell<char>
         if (!_reachableNines.Contains(nineNode))
             _reachableNines.Add(nineNode);
 
-        foreach (var prev in PreviousSteps)
+        foreach (var previousStep in PreviousSteps)
         {
-            prev.RateTheTrail(nineNode);
+            previousStep.ScoreTheTrail(nineNode);
+        }
+    }
+
+    public void RateTheTrail(bool isEnd = true)
+    {
+        if (isEnd && Content != '9')
+            return;
+        
+        Rating++;
+        foreach (var previousStep in PreviousSteps)
+        {
+            previousStep.RateTheTrail(false);
         }
     }
 }
@@ -59,6 +72,7 @@ public class TrailMap : Map<TrailNode>
 
     protected override string LogTitle => "=== TRAILING MAP ===";
     public long TrailScore => _trailStarts?.Sum(trail => trail.Score) ?? 0;
+    public long TrailRating => _trailStarts?.Sum(trail => trail.Rating) ?? 0;
 
     public void FindTrails()
     {
@@ -101,8 +115,10 @@ public class TrailMap : Map<TrailNode>
             }
         }
 
-        foreach (var trailEnd in trailEnds)
+        foreach (var trailEnd in trailEnds.Distinct())
         {
+            Logger.Log($"Scoring and rating for {trailEnd.Coordinates}.");
+            trailEnd.ScoreTheTrail();
             trailEnd.RateTheTrail();
         }
     }
@@ -115,7 +131,7 @@ public class TrailMap : Map<TrailNode>
         {
             Logger.Log($"Found path to {direction}");
             dirCell.PreviousSteps.Add(curNode);
-            curNode.NextSteps.Add(curNode);
+            curNode.NextSteps.Add(dirCell);
             nodesToWalk.Push(dirCell);
             return true;
         }
@@ -123,21 +139,42 @@ public class TrailMap : Map<TrailNode>
         return false;
     }
 
-    public string ToVisitString()
+    public string ToInfoString()
     {
         var sb = new StringBuilder();
         sb.AppendLine("=== VISITED TRAIL MAP ===");
         for (var i = 0; i < _trailStarts.Count; i++)
         {
-            sb.AppendLine($"Trail #{i+1} scores {_trailStarts[i].Score}");
+            sb.AppendLine($"Trail #{i+1}: score {_trailStarts[i].Score}, rating {_trailStarts[i].Rating}");
         }
-        sb.AppendLine($"=== ({_trailStarts.Count} trails) ===");
-        foreach (var line in MapCells)
+        sb.AppendLine($"(total {_trailStarts.Count} trails)");
+        return sb.ToString();
+    }
+
+    public string ToTrailString(int trailId)
+    {
+        var trail = _trailStarts[trailId];
+        var sb = new StringBuilder();
+        sb.AppendLine($"=== TRAIL #{trailId+1} ===");
+        
+        var nodes = new Stack<TrailNode>();
+        nodes.Push(trail);
+        var seen = new List<TrailNode>();
+        seen.Add(trail);
+        while (nodes.Any())
         {
-            foreach (var cell in line)
-                sb.Append(cell.ToVisitString());
-            sb.AppendLine();
+            var node = nodes.Pop();
+            sb.AppendLine($"Node {node.Coordinates} has path at {string.Join(" ", node.NextSteps.Select(s => s.Coordinates))}");
+            foreach (var next in node.NextSteps)
+            {
+                if (!seen.Contains(next))
+                {
+                    nodes.Push(next);
+                    seen.Add(next);
+                }
+            }
         }
+        
         return sb.ToString();
     }
 }

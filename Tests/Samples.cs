@@ -100,6 +100,7 @@ namespace AoC2024_Tests
         public void Sample10()
         {
             TestOneStar(new AoC2024.Workers.Day10.TrailFinder(), GetSamplePath(10), 36);
+            TestTwoStars(new AoC2024.Workers.Day10.TrailFinder(), GetSamplePath(10), 81);
         }
 
         [Test]
