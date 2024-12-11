@@ -11,6 +11,9 @@ public class Cluster
 
     public long GetChecksum(int offset)
     {
+        if (Label <= 0)
+            return 0L;
+        
         // Because total checksum is sum first integers * cell[id].Label
         // the checksum for a cluster
         // is the sum between offset and (offset + Size - 1)
@@ -42,7 +45,8 @@ public class Disk
 
     public void Defragment()
     {
-        var clustersToProcess = new List<Cluster>(Clusters.Select(c => new Cluster { Size = c.Size, Label = c.Label }));
+        DefragmentedClusters.Clear();
+        var clustersToProcess = new List<Cluster>(Clusters);
 
         var firstCluster = GetNextCluster(ref clustersToProcess, true, false);
         var lastCluster = GetNextCluster(ref clustersToProcess, false, true);
@@ -104,6 +108,55 @@ public class Disk
 
                 break;
             }
+        }
+    }
+
+    public void RearrangeFiles()
+    {
+        DefragmentedClusters = new List<Cluster>(Clusters);
+        for (int index = DefragmentedClusters.Count - 1; index > 1; index--)
+        {
+            if (DefragmentedClusters[index].Label == -1)
+            {
+                Logger.Log("We don't move free clusters, skipping.");
+                continue;
+            }
+            
+            var lastCluster = DefragmentedClusters[index];
+            Logger.Log($"Trying to find a spot for cluster {lastCluster.Label} of size {lastCluster.Size}");
+
+            bool clusterMoved = false;
+            for (int i = 0; !clusterMoved && i < index; i++)
+            {
+                if (DefragmentedClusters[i].Label == -1 && DefragmentedClusters[i].Size >= lastCluster.Size)
+                {
+                    clusterMoved = true;
+                    Logger.Log($"Found a free spot of size {DefragmentedClusters[i].Size}");
+                    
+                    DefragmentedClusters.RemoveAt(index);
+                    DefragmentedClusters.Insert(index, new Cluster { Label = -1, Size = lastCluster.Size });
+                    Logger.Log("> Last cluster replaced by free space of same size.");
+
+                    var freeClusterSize = DefragmentedClusters[i].Size;
+                    DefragmentedClusters.RemoveAt(i);
+                    
+                    DefragmentedClusters.Insert(i, lastCluster);
+                    freeClusterSize -= lastCluster.Size;
+                    Logger.Log($"> Last cluster inserted in place of free spot. Free space left: {freeClusterSize}.");
+
+                    if (freeClusterSize > 0)
+                    {
+                        DefragmentedClusters.Insert(i + 1, new Cluster { Label = -1, Size = freeClusterSize });
+                        index++;
+                        Logger.Log($"> Free space of size {freeClusterSize} inserted after cluster.");
+                    }
+                    
+                    Logger.Log(ClustersToDevelopedString(DefragmentedClusters));
+                }
+            }
+
+            if (!clusterMoved)
+                Logger.Log("No space found to move this cluster.");
         }
     }
 

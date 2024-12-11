@@ -23,6 +23,15 @@ namespace AoC2024.Workers.Day09
             return _disk.GetDefragmentedChecksum();
         }
 
+        protected override long WorkTwoStars_Implementation()
+        {
+            LogDisk();
+            _disk.RearrangeFiles();
+            Logger.Log($"Files rearranged.");
+            LogDefragmentedDisk();
+            return _disk.GetDefragmentedChecksum();
+        }
+
         private void LogDisk()
         {
             if (Logger.ShowAboveSeverity > SeverityLevel.Low)
