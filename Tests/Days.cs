@@ -97,6 +97,12 @@ namespace AoC2024_Tests
         }
 
         [Test]
+        public void Day10()
+        {
+            TestOneStar(new AoC2024.Workers.Day10.TrailFinder(), GetDataPath(10), 611);
+        }
+
+        [Test]
         public void Day11()
         {
             TestOneStar(new AoC2024.Workers.Day11.QuanticStoneBlinker(), GetDataPath(11), 217443);

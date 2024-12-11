@@ -97,6 +97,12 @@ namespace AoC2024_Tests
         }
 
         [Test]
+        public void Sample10()
+        {
+            TestOneStar(new AoC2024.Workers.Day10.TrailFinder(), GetSamplePath(10), 36);
+        }
+
+        [Test]
         public void Sample11()
         {
             TestOneStar(new AoC2024.Workers.Day11.QuanticStoneBlinker(), GetSamplePath(11), 55312);
