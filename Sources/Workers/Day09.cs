@@ -18,9 +18,8 @@ namespace AoC2024.Workers.Day09
         {
             LogDisk();
             _disk.Defragment();
-            Logger.Log($">>> NONO: Defragmented, {_disk.DefragmentedClusters.Count(c => c.Size == 0)} empty clusters", SeverityLevel.Always);
+            Logger.Log($"Defragmentation done, {_disk.DefragmentedClusters.Count(c => c.Size == 0)} empty clusters", SeverityLevel.Always);
             LogDefragmentedDisk();
-            //return _disk.GetDefragmentedChecksum_Raw();
             return _disk.GetDefragmentedChecksum();
         }
 
