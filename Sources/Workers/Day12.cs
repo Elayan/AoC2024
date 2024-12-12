@@ -18,7 +18,15 @@ public class GardenFencer : WorkerBase
     {
         _map.FindAreas();
         LogInfos();
-        return _map.Areas.Sum(a => a.Perimeter * a.Plots.Length);
+        return _map.Areas.Sum(a => a.Fences.Length * a.Plots.Length);
+    }
+
+    protected override long WorkTwoStars_Implementation()
+    {
+        _map.FindAreas();
+        _map.ProcessAreaFences();
+        LogInfos();
+        return _map.Areas.Sum(a => a.Plots.Length * a.FenceSides.Count);
     }
 
     private void LogInfos()

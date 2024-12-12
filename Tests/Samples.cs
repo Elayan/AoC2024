@@ -116,6 +116,12 @@ namespace AoC2024_Tests
             TestOneStar(new AoC2024.Workers.Day12.GardenFencer(), GetSamplePath(12, "_a"), 140);
             TestOneStar(new AoC2024.Workers.Day12.GardenFencer(), GetSamplePath(12, "_b"), 772);
             TestOneStar(new AoC2024.Workers.Day12.GardenFencer(), GetSamplePath(12), 1930);
+            
+            TestTwoStars(new AoC2024.Workers.Day12.GardenFencer(), GetSamplePath(12, "_a"), 80);
+            TestTwoStars(new AoC2024.Workers.Day12.GardenFencer(), GetSamplePath(12, "_b"), 436);
+            TestTwoStars(new AoC2024.Workers.Day12.GardenFencer(), GetSamplePath(12, "_c"), 236);
+            TestTwoStars(new AoC2024.Workers.Day12.GardenFencer(), GetSamplePath(12, "_d"), 368);
+            TestTwoStars(new AoC2024.Workers.Day12.GardenFencer(), GetSamplePath(12), 1206);
         }
     }
 }

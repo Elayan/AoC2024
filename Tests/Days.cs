@@ -114,6 +114,7 @@ namespace AoC2024_Tests
         public void Day12()
         {
             TestOneStar(new AoC2024.Workers.Day12.GardenFencer(), GetDataPath(12), 1467094);
+            TestTwoStars(new AoC2024.Workers.Day12.GardenFencer(), GetDataPath(12), 881182);
         }
     }
 }
