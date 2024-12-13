@@ -116,5 +116,11 @@ namespace AoC2024_Tests
             TestOneStar(new AoC2024.Workers.Day12.GardenFencer(), GetDataPath(12), 1467094);
             TestTwoStars(new AoC2024.Workers.Day12.GardenFencer(), GetDataPath(12), 881182);
         }
+
+        [Test]
+        public void Day13()
+        {
+            TestOneStar(new AoC2024.Workers.Day13.ClawMachineHacker(), GetDataPath(13), -1, SeverityLevel.Low); // 41373 too high
+        }
     }
 }
