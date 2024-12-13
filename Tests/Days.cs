@@ -120,7 +120,7 @@ namespace AoC2024_Tests
         [Test]
         public void Day13()
         {
-            TestOneStar(new AoC2024.Workers.Day13.ClawMachineHacker(), GetDataPath(13), -1, SeverityLevel.Low); // 41373 too high
+            TestOneStar(new AoC2024.Workers.Day13.ClawMachineHacker(), GetDataPath(13), 38714);
         }
     }
 }

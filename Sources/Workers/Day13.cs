@@ -69,18 +69,32 @@ public class ClawMachineHacker : WorkerBase
         long ya, long yb, long y,
         out long a, out long b)
     {
-        try
+        var divisor = xa * yb - xb * ya;
+        if (divisor == 0L)
         {
-            a = (x * yb - xb * y) / (xa * yb - xb * ya);
-            b = (xa * y - x * ya) / (xa * yb - xb * ya);
-            return true;
-        }
-        catch (Exception e)
-        {
-            Logger.Log(e.Message);
             a = -1;
             b = -1;
             return false;
         }
+
+        var aNumerator = x * yb - xb * y;
+        if (aNumerator % divisor != 0)
+        {
+            a = -1;
+            b = -1;
+            return false;
+        }
+        
+        var bNumerator = xa * y - x * ya;
+        if (bNumerator % divisor != 0)
+        {
+            a = -1;
+            b = -1;
+            return false;
+        }
+        
+        a = aNumerator / divisor;
+        b = bNumerator / divisor;
+        return true;
     }
 }
