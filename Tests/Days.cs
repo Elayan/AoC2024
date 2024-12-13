@@ -121,6 +121,7 @@ namespace AoC2024_Tests
         public void Day13()
         {
             TestOneStar(new AoC2024.Workers.Day13.ClawMachineHacker(), GetDataPath(13), 38714);
+            TestTwoStars(new AoC2024.Workers.Day13.ClawMachineHacker(), GetDataPath(13), 74015623345775);
         }
     }
 }

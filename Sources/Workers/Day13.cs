@@ -31,21 +31,31 @@ public class ClawMachineHacker : WorkerBase
 
     protected override long WorkOneStar_Implementation()
     {
+        return HackTheMachines(0, 100);
+    }
+
+    protected override long WorkTwoStars_Implementation()
+    {
+        return HackTheMachines(10000000000000);
+    }
+
+    private long HackTheMachines(long prizeOffset, long pushLimit = -1)
+    {
         var tokens = 0L;
         Logger.Log($"Hacking {_machines.Count} machines!");
         foreach (var machine in _machines)
         {
             Logger.Log($"Hacking machine: {machine}");
             if (!ComputeSolutionForSystemWithTwoEquationsAndTwoUnknowns(
-                    machine.AX, machine.BX, machine.PrizeX,
-                    machine.AY, machine.BY, machine.PrizeY,
+                    machine.AX, machine.BX, machine.PrizeX + prizeOffset,
+                    machine.AY, machine.BY, machine.PrizeY + prizeOffset,
                     out var A, out var B))
             {
                 Logger.Log("> this machine doesn't have a solution.");
                 continue;
             }
 
-            if (A > 100 || B > 100)
+            if (pushLimit > 0 && (A > pushLimit || B > pushLimit))
             {
                 Logger.Log("> this machine is too expensive.");
                 continue;
