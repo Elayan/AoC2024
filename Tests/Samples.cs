@@ -123,5 +123,12 @@ namespace AoC2024_Tests
             TestTwoStars(new AoC2024.Workers.Day12.GardenFencer(), GetSamplePath(12, "_d"), 368);
             TestTwoStars(new AoC2024.Workers.Day12.GardenFencer(), GetSamplePath(12), 1206);
         }
+
+        [Test]
+        public void Sample13()
+        {
+            TestOneStar(new AoC2024.Workers.Day13.ClawMachineHacker(), GetSamplePath(13), 480);
+            TestOneStar(new AoC2024.Workers.Day13.ClawMachineHacker(), GetSamplePath(13, "_a"), -1);
+        }
     }
 }
