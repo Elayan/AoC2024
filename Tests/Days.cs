@@ -130,6 +130,8 @@ namespace AoC2024_Tests
         {
             TestOneStar(new AoC2024.Workers.Day14.ToiletRobots { BathroomSize = new Coordinates(103, 101) },
                         GetDataPath(14), 211773366);
+            TestTwoStars(new AoC2024.Workers.Day14.ToiletRobots { BathroomSize = new Coordinates(103, 101) },
+                        GetDataPath(14), 7344, SeverityLevel.Low);
         }
     }
 }

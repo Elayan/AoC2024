@@ -30,6 +30,51 @@ public class ToiletRobots : WorkerBase
         return ComputeMapValue();
     }
 
+    protected override long WorkTwoStars_Implementation()
+    {
+        //*****************************************************************************
+        // This is what I did to actually find the Christmas Tree.
+        // I just fiddled with the way robots would agglomerate and threw in a magic number...
+        //*****************************************************************************
+        // for (int i = 0; i < 10000; i++)
+        // {
+        //     Logger.Log($"Walking step {i+1}");
+        //     foreach(var robot in _robots)
+        //         robot.Walk(1, BathroomSize);
+        //     
+        //     Logger.Log($"Evaluation: {Evaluate(out var rScore, out var cScore)}");
+        //     if (rScore > 200 && cScore > 200)
+        //     {
+        //         LogMap();
+        //     }
+        // }
+        //*****************************************************************************
+        
+        foreach(var robot in _robots)
+            robot.Walk(7344, BathroomSize);
+        LogMap();
+        return 7344L;
+    }
+
+    private string Evaluate(out long rScore, out long cScore)
+    {
+        // group robots by row position
+        var robotsGroupR = _robots
+            .GroupBy(r => r.Position.Row);
+        var countByRow = robotsGroupR.ToDictionary(g => g.Key, g => g.Count());
+        var highestCounts = countByRow.Select(g => g.Value).OrderBy(c => c);
+        rScore = highestCounts.TakeLast(10).Sum();
+        
+        // group robots by col position
+        var robotsGroupC = _robots
+            .GroupBy(r => r.Position.Col);
+        var countByCol = robotsGroupC.ToDictionary(g => g.Key, g => g.Count());
+        highestCounts = countByCol.Select(g => g.Value).OrderBy(c => c);
+        cScore = highestCounts.TakeLast(10).Sum();
+
+        return $"Row {rScore} - Col {cScore}";
+    }
+
     private long ComputeMapValue()
     {
         var quadrantSize = BathroomSize / 2;
