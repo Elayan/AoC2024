@@ -2,6 +2,7 @@
 using AoCTools.Workers;
 using NUnit.Framework;
 using System.IO;
+using AoCTools.Frame.TwoDimensions;
 
 namespace AoC2024_Tests
 {
@@ -122,6 +123,13 @@ namespace AoC2024_Tests
         {
             TestOneStar(new AoC2024.Workers.Day13.ClawMachineHacker(), GetDataPath(13), 38714);
             TestTwoStars(new AoC2024.Workers.Day13.ClawMachineHacker(), GetDataPath(13), 74015623345775);
+        }
+
+        [Test]
+        public void Day14()
+        {
+            TestOneStar(new AoC2024.Workers.Day14.ToiletRobots { BathroomSize = new Coordinates(103, 101) },
+                        GetDataPath(14), 211773366);
         }
     }
 }
