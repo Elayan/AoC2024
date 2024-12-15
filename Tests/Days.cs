@@ -133,5 +133,11 @@ namespace AoC2024_Tests
             TestTwoStars(new AoC2024.Workers.Day14.ToiletRobots { BathroomSize = new Coordinates(103, 101) },
                         GetDataPath(14), 7344, SeverityLevel.Low);
         }
+
+        [Test]
+        public void Day15()
+        {
+            TestOneStar(new AoC2024.Workers.Day15.AnglerFishWarehouse(), GetDataPath(15), 1437174);
+        }
     }
 }

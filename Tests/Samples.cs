@@ -137,8 +137,15 @@ namespace AoC2024_Tests
         {
             TestOneStar(new AoC2024.Workers.Day14.ToiletRobots { BathroomSize = new Coordinates(7, 11) },
                         GetSamplePath(14), 12);
-            //TestOneStar(new AoC2024.Workers.Day14.ToiletRobots { BathroomSize = new Coordinates(7, 11) },
-            //            GetSamplePath(14, "_one"), 12);
+            TestOneStar(new AoC2024.Workers.Day14.ToiletRobots { BathroomSize = new Coordinates(7, 11) },
+                        GetSamplePath(14, "_one"), 0);
+        }
+
+        [Test]
+        public void Sample15()
+        {
+            TestOneStar(new AoC2024.Workers.Day15.AnglerFishWarehouse(), GetSamplePath(15, "_small"), 2028);
+            TestOneStar(new AoC2024.Workers.Day15.AnglerFishWarehouse(), GetSamplePath(15), 10092);
         }
     }
 }
