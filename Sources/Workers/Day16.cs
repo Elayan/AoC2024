@@ -15,10 +15,11 @@ public class ReindeerRace : WorkerBase
 
     protected override long WorkOneStar_Implementation()
     {
-        var foundPath = _map.ComputeShortestPath(out var moves, out var cost);
-        if (!foundPath)
-            return -1L;
-        
-        return cost;
+        return _map.ComputeShortestPathCost();
+    }
+
+    protected override long WorkTwoStars_Implementation()
+    {
+        return _map.ComputeWalkedCellCountOnShortestPaths();
     }
 }

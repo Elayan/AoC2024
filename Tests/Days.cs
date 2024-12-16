@@ -144,7 +144,8 @@ namespace AoC2024_Tests
         [Test]
         public void Day16()
         {
-            TestOneStar(new AoC2024.Workers.Day16.ReindeerRace(), GetDataPath(16), 106512); // 4s
+            TestOneStar(new AoC2024.Workers.Day16.ReindeerRace(), GetDataPath(16), 106512); // 30s
+            TestTwoStars(new AoC2024.Workers.Day16.ReindeerRace(), GetDataPath(16), 563); // 29s
         }
     }
 }

@@ -158,6 +158,9 @@ namespace AoC2024_Tests
         {
             TestOneStar(new AoC2024.Workers.Day16.ReindeerRace(), GetSamplePath(16), 7036);
             TestOneStar(new AoC2024.Workers.Day16.ReindeerRace(), GetSamplePath(16, "_b"), 11048);
+            
+            TestTwoStars(new AoC2024.Workers.Day16.ReindeerRace(), GetSamplePath(16), 45);
+            TestTwoStars(new AoC2024.Workers.Day16.ReindeerRace(), GetSamplePath(16, "_b"), 64);
         }
     }
 }

@@ -19,13 +19,31 @@ public class ReindeerPath
     public Coordinates Position { get; set; }
     public CardinalDirection Direction { get; set; }
     public long Cost { get; set; }
-    
-    public long DistanceTo(Coordinates coords) => Math.Abs(Position.Row - coords.Row) + Math.Abs(Position.Col - coords.Col);
+    public List<ReindeerPath> Variants { get; set; } = new();
+    public List<Coordinates> VisitedCoordinates { get; set; } = new();
+
+    public void SetCurrentPositionAsVisited()
+    {
+        if (!VisitedCoordinates.Contains(Position))
+            VisitedCoordinates.Add(Position);
+    }
+
+    public void AddVariantToVisited(ReindeerPath variant)
+    {
+        Variants.Add(variant);
+        var memoCount = VisitedCoordinates.Count;
+        var allVisitedCoords = VisitedCoordinates.ToList();
+        allVisitedCoords.AddRange(variant.VisitedCoordinates);
+        VisitedCoordinates = allVisitedCoords.Distinct().ToList();
+        Logger.Log($"Added {VisitedCoordinates.Count - memoCount} new visited cells ({memoCount} => {VisitedCoordinates.Count})!");
+    }
 
     public ReindeerPath CreatePathFromHere(ReindeerMove move)
     {
         var newPath = new ReindeerPath();
         newPath.Moves = new List<ReindeerMove>(Moves) { move };
+        newPath.Variants = new List<ReindeerPath>(Variants);
+        newPath.VisitedCoordinates = new List<Coordinates>(VisitedCoordinates);
         switch (move)
         {
             case ReindeerMove.Forward:
@@ -123,23 +141,71 @@ public class LabyrinthMap : Map<LabyrinthCell>
         return sb.ToString();
     }
 
-    public bool ComputeShortestPath(out List<ReindeerMove> moves, out long cost)
+    public long ComputeShortestPathCost()
+    {
+        var paths = ComputeShortestPaths(true);
+        return paths[0].Cost;
+    }
+
+    public long ComputeWalkedCellCountOnShortestPaths()
+    {
+        var paths = ComputeShortestPaths(false);
+        var allVisitedCells = new List<Coordinates>();
+        foreach (var path in paths)
+        {
+            allVisitedCells.AddRange(path.VisitedCoordinates);
+        }
+        return allVisitedCells.Distinct().Count();
+    }
+
+    private class VisitedCell
+    {
+        public Coordinates Coordinates { get; set; }
+        public CardinalDirection Direction { get; set; }
+        public long Cost { get; set; }
+        public List<ReindeerPath> PathsThatVisited { get; set; } = new();
+    }
+
+    public List<ReindeerPath> ComputeShortestPaths(bool stopAtFirstFound)
     {
         var allPaths = new List<ReindeerPath>();
         allPaths.Add(new ReindeerPath { Position = StartPosition, Direction = CardinalDirection.East });
-        var visitedCells = new Dictionary<LabyrinthCell, bool[]>();
+
+        var visitedCells = new List<VisitedCell>();
+        var visitedCellsByPath = new Dictionary<ReindeerPath, List<VisitedCell>>();
+
+        var shortestPaths = new List<ReindeerPath>();
+        var shortestPathCost = -1L;
+
         while (allPaths.Any())
         {
             var path = allPaths.First();
             allPaths.RemoveAt(0);
+            Logger.Log($"[cost {path.Cost}] At {path.Position}, turned {path.Direction} (already {path.Moves.Count} moves, {path.VisitedCoordinates.Count} visited cells)");
+            Logger.Log(string.Join(", ", path.Moves));
+            
+            if (shortestPathCost > -1 && path.Cost > shortestPathCost)
+            {
+                Logger.Log($"No more path as cheap as {shortestPathCost}, returning {shortestPaths.Count} paths!");
+                return shortestPaths;
+            }
 
             var curCell = GetCell(path.Position);
             if (curCell.Coordinates.Equals(EndPosition))
             {
-                Logger.Log($"Shortest path found: {string.Join(", ", path.Moves)}");
-                cost = path.Cost;
-                moves = path.Moves;
-                return true;
+                if (!shortestPaths.Any())
+                {
+                    Logger.Log($"First shortest path found! Cost = {path.Cost}");
+                    shortestPathCost = path.Cost;
+                }
+                
+                shortestPaths.Add(path);
+                Logger.Log($"Short path found: {string.Join(", ", path.Moves)}");
+                if (stopAtFirstFound)
+                {
+                    Logger.Log($"Stopping at first find!");
+                    return shortestPaths;
+                }
             }
 
             if (curCell.Content == CellType.Wall)
@@ -148,32 +214,65 @@ public class LabyrinthMap : Map<LabyrinthCell>
                 continue;
             }
 
-            if (visitedCells.TryGetValue(curCell, out bool[] visited))
+            var alreadyVisitedCell = visitedCells.FirstOrDefault(vc => vc.Coordinates.Equals(path.Position) && vc.Direction == path.Direction);
+            if (alreadyVisitedCell != null)
             {
-                if (visited[(int)path.Direction])
+                if (alreadyVisitedCell.Cost <= path.Cost)
                 {
-                    Logger.Log("Running in circle!");
+                    Logger.Log($"This is a variant of another path, saving.");
+                    foreach (var p in alreadyVisitedCell.PathsThatVisited)
+                        p.AddVariantToVisited(path);
                     continue;
                 }
+                
+                Logger.Log($"Running in circle!");
+                continue;
+            }
+            
+            path.SetCurrentPositionAsVisited();
 
-                visited[(int)path.Direction] = true;
-            }
-            else
+            alreadyVisitedCell = new VisitedCell { Coordinates = path.Position, Direction = path.Direction, Cost = path.Cost };
+            alreadyVisitedCell.PathsThatVisited.Add(path);
+            visitedCells.Add(alreadyVisitedCell);
+            
+            if (!visitedCellsByPath.TryGetValue(path, out var visitedCellsForPath))
             {
-                visitedCells.Add(curCell, new bool[4]);
-                visitedCells[curCell][(int)path.Direction] = true;
+                visitedCellsByPath.Add(path, new List<VisitedCell>());
+                visitedCellsForPath = visitedCellsByPath[path];
             }
+            visitedCellsForPath.Add(alreadyVisitedCell);
             
-            
-            allPaths.Add(path.CreatePathFromHere(ReindeerMove.Forward));
-            allPaths.Add(path.CreatePathFromHere(ReindeerMove.TurnRight));
-            allPaths.Add(path.CreatePathFromHere(ReindeerMove.TurnLeft));
+            Logger.Log($"Go on!");
+            foreach (var visitedCell in visitedCellsForPath)
+                visitedCell.PathsThatVisited.Remove(path);
+            if (GetCell(path.Position + path.Direction.ToCoordinates()).Content != CellType.Wall)
+            {
+                var newPath = path.CreatePathFromHere(ReindeerMove.Forward);
+                foreach (var v in visitedCellsForPath)
+                    v.PathsThatVisited.Add(newPath);
+                allPaths.Add(newPath);
+            }
+
+            if (GetCell(path.Position + path.Direction.GetRightTurn().ToCoordinates()).Content != CellType.Wall)
+            {
+                var newPath = path.CreatePathFromHere(ReindeerMove.TurnRight);
+                foreach (var v in visitedCellsForPath)
+                    v.PathsThatVisited.Add(newPath);
+                allPaths.Add(newPath);
+            }
+
+            if (GetCell(path.Position + path.Direction.GetLeftTurn().ToCoordinates()).Content != CellType.Wall)
+            {
+                var newPath = path.CreatePathFromHere(ReindeerMove.TurnLeft);
+                foreach (var v in visitedCellsForPath)
+                    v.PathsThatVisited.Add(newPath);
+                allPaths.Add(newPath);
+            }
+
             allPaths = allPaths.OrderBy(p => p.Cost).ToList();
         }
         
         Logger.Log("Found nothing, that's bad!");
-        cost = -1;
-        moves = null;
-        return false;
+        return null;
     }
 }
