@@ -144,8 +144,13 @@ namespace AoC2024_Tests
         [Test]
         public void Sample15()
         {
-            TestOneStar(new AoC2024.Workers.Day15.AnglerFishWarehouse(), GetSamplePath(15, "_small"), 2028);
+            TestOneStar(new AoC2024.Workers.Day15.AnglerFishWarehouse(), GetSamplePath(15, "_a"), 2028);
             TestOneStar(new AoC2024.Workers.Day15.AnglerFishWarehouse(), GetSamplePath(15), 10092);
+            
+            TestTwoStars(new AoC2024.Workers.Day15.AnglerFishWarehouse { DoubleSize = true },
+                GetSamplePath(15, "_b"), 618);
+            TestTwoStars(new AoC2024.Workers.Day15.AnglerFishWarehouse { DoubleSize = true },
+                GetSamplePath(15), 9021);
         }
     }
 }

@@ -9,7 +9,9 @@ namespace AoC2024.Structures.AnglerFish;
 public enum CellType
 {
     Empty,
-    Box,
+    SmallBox,
+    LeftHalfBox,
+    RightHalfBox,
     Wall,
     Robot,
 }
@@ -20,13 +22,24 @@ public class AnglerFishMapCell : MapCell<CellType>
     { }
 
     public void SetContent(CellType type) => Content = type;
-    public long GPSC => Content == CellType.Box ? 100 * Coordinates.Row + Coordinates.Col : 0L;
+
+    public long GetGPSC()
+    {
+        if (Content == CellType.SmallBox || Content == CellType.LeftHalfBox)
+            return 100 * Coordinates.Row + Coordinates.Col;
+
+        return 0L;
+    }
+
+    public bool IsBox => Content == CellType.SmallBox || Content == CellType.LeftHalfBox || Content == CellType.RightHalfBox;
 
     private static CellType CharToCellType(char c)
     {
         switch (c)
         {
-            case 'O': return CellType.Box;
+            case 'O': return CellType.SmallBox;
+            case '[': return CellType.LeftHalfBox;
+            case ']': return CellType.RightHalfBox;
             case '#': return CellType.Wall;
             case '@': return CellType.Robot;
             default: return CellType.Empty;
@@ -37,7 +50,9 @@ public class AnglerFishMapCell : MapCell<CellType>
     {
         switch (type)
         {
-            case CellType.Box: return "O";
+            case CellType.SmallBox: return "O";
+            case CellType.LeftHalfBox: return "[";
+            case CellType.RightHalfBox: return "]";
             case CellType.Wall: return "#";
             case CellType.Robot: return "@";
             default: return ".";
@@ -76,7 +91,7 @@ public class AnglerFishMap : Map<AnglerFishMapCell>
 
     protected override string LogTitle => "=== DARK BRAMBLE ===";
     
-    public long GPSCSum => AllCells.Sum(cell => cell.GPSC);
+    public long GPSCSum => AllCells.Sum(cell => cell.GetGPSC());
 
     public override string ToString()
     {
@@ -119,45 +134,148 @@ public class AnglerFishMap : Map<AnglerFishMapCell>
         throw new Exception();
     }
 
-    public void LetRobotWalk()
+    public void LetRobotWalk(bool verbose)
     {
         Logger.Log($"Starting position {RobotPosition} - {Moves.Count} moves to apply.");
         foreach (var move in Moves)
         {
             var moveCoords = move.ToCoordinates();
             var nextCell = GetCell(RobotPosition + moveCoords);
-            if (nextCell.Content == CellType.Wall)
-            {
-                Logger.Log($"{RobotPosition}[{move}] Won't walk into wall.");
+            if (TryEasyStep(nextCell, move))
                 continue;
-            }
-
-            if (nextCell.Content == CellType.Empty)
-            {
-                Logger.Log($"{RobotPosition}[{move}] Walking to empty cell.");
-                RobotPosition = nextCell.Coordinates;
-                continue;
-            }
             
             Logger.Log($"{RobotPosition}[{move}] Attempting to push boxes...");
-            var boxes = new List<AnglerFishMapCell>();
-            var endOfBoxLine = nextCell;
-            while (endOfBoxLine.Content == CellType.Box)
+            var boxesToMove = new Stack<AnglerFishMapCell>();
+            var boxesToTryPushing = new Stack<AnglerFishMapCell>();
+            boxesToTryPushing.Push(nextCell);
+            
+            var isMoveVertical = move.IsVertical();
+            var isStuck = false;
+            while (boxesToTryPushing.Any())
             {
-                boxes.Add(endOfBoxLine);
-                endOfBoxLine = GetCell(endOfBoxLine.Coordinates + moveCoords);
+                var boxToPush = boxesToTryPushing.Pop();
+                if (boxToPush.Content == CellType.Empty)
+                {
+                    continue;
+                }
+                if (boxToPush.Content == CellType.Wall)
+                {
+                    Logger.Log($">>> trying to push wall {boxToPush.Coordinates}, stuck!");
+                    isStuck = true;
+                    break;
+                }
+                
+                boxesToMove.Push(boxToPush);
+                Logger.Log($">>> will move box_{boxToPush} {boxToPush.Coordinates}");
+
+                var nextBox = GetCell(boxToPush.Coordinates + moveCoords);
+                if (!boxesToMove.Contains(nextBox) && !boxesToTryPushing.Contains(nextBox))
+                {
+                    Logger.Log($">>> (next box is {nextBox.Coordinates})");
+                    boxesToTryPushing.Push(nextBox);
+                }
+                
+                if (isMoveVertical)
+                {
+                    Logger.Log(">>> we're pushing vertically, we check if there's another half...");
+                    if (!CheckVerticalHalfBoxes(boxToPush, moveCoords, out var otherHalf))
+                    {
+                        isStuck = true;
+                        break;
+                    }
+
+                    if (otherHalf != null && !boxesToMove.Contains(otherHalf) && !boxesToTryPushing.Contains(otherHalf))
+                    {
+                        Logger.Log($">>> adding other half box_{otherHalf} {otherHalf.Coordinates}");
+                        boxesToTryPushing.Push(otherHalf);
+                    }
+                }
             }
 
-            if (endOfBoxLine.Content == CellType.Wall)
+            if (isStuck)
             {
-                Logger.Log($"...pushing {boxes.Count} boxes against wall, ignoring.");
+                Logger.Log($"...pushing {boxesToMove.Count} boxes against wall, ignoring.");
                 continue;
             }
             
-            Logger.Log($"...pushing {boxes.Count} boxes.");
-            endOfBoxLine.SetContent(CellType.Box);
+            Logger.Log($"...pushing {boxesToMove.Count} boxes.");
+            PushBoxes(boxesToMove, moveCoords);
             nextCell.SetContent(CellType.Empty);
             RobotPosition = nextCell.Coordinates;
+
+            if (verbose)
+            {
+                var robotCell = GetCell(RobotPosition);
+                robotCell.SetContent(CellType.Robot);
+                Logger.Log(base.ToString());
+                robotCell.SetContent(CellType.Empty);
+            }
+        }
+    }
+
+    private bool TryEasyStep(AnglerFishMapCell nextCell, CardinalDirection move)
+    {
+        if (nextCell.Content == CellType.Wall)
+        {
+            Logger.Log($"{RobotPosition}[{move}] Won't walk into wall.");
+            return true;
+        }
+
+        if (nextCell.Content == CellType.Empty)
+        {
+            Logger.Log($"{RobotPosition}[{move}] Walking to empty cell.");
+            RobotPosition = nextCell.Coordinates;
+            return true;
+        }
+
+        return false;
+    }
+
+    private bool CheckVerticalHalfBoxes(AnglerFishMapCell curBoxCell, Coordinates moveCoords, out AnglerFishMapCell cellToDecal)
+    {
+        cellToDecal = null;
+        if (curBoxCell.Content == CellType.LeftHalfBox)
+        {
+            var rightHalfCell = GetCell(curBoxCell.Coordinates + CardinalDirection.East.ToCoordinates());
+            var rightHalfNextCell = GetCell(rightHalfCell.Coordinates + moveCoords);
+            if (rightHalfNextCell.Content == CellType.Wall)
+            {
+                return false;
+            }
+
+            cellToDecal = rightHalfCell;
+        }
+        else if (curBoxCell.Content == CellType.RightHalfBox)
+        {
+            var leftHalfCell = GetCell(curBoxCell.Coordinates + CardinalDirection.West.ToCoordinates());
+            var leftHalfNextCell = GetCell(leftHalfCell.Coordinates + moveCoords);
+            if (leftHalfNextCell.Content == CellType.Wall)
+            {
+                return false;
+            }
+                    
+            cellToDecal = leftHalfCell;
+        }
+        
+        return true;
+    }
+
+    private void PushBoxes(Stack<AnglerFishMapCell> boxes, Coordinates moveCoords)
+    {
+        var memoBoxContent = boxes.ToDictionary(b => b, b => b.Content);
+        var previousBoxLocations = boxes.ToList();
+
+        while (boxes.Any())
+        {
+            var boxCell = boxes.Pop();
+            var nextBoxCell = GetCell(boxCell.Coordinates + moveCoords);
+            nextBoxCell.SetContent(memoBoxContent[boxCell]);
+            previousBoxLocations.Remove(nextBoxCell);
+        }
+
+        foreach (var leftSpace in previousBoxLocations)
+        {
+            leftSpace.SetContent(CellType.Empty);
         }
     }
 }
