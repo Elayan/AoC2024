@@ -152,5 +152,12 @@ namespace AoC2024_Tests
             TestTwoStars(new AoC2024.Workers.Day15.AnglerFishWarehouse { DoubleSize = true },
                 GetSamplePath(15), 9021);
         }
+
+        [Test]
+        public void Sample16()
+        {
+            TestOneStar(new AoC2024.Workers.Day16.ReindeerRace(), GetSamplePath(16), 7036);
+            TestOneStar(new AoC2024.Workers.Day16.ReindeerRace(), GetSamplePath(16, "_b"), 11048);
+        }
     }
 }
