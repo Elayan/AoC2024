@@ -123,7 +123,7 @@ public class LabyrinthMap : Map<LabyrinthCell>
         return sb.ToString();
     }
 
-    public List<ReindeerMove> ComputeShortestPath(out long cost)
+    public bool ComputeShortestPath(out List<ReindeerMove> moves, out long cost)
     {
         var allPaths = new List<ReindeerPath>();
         allPaths.Add(new ReindeerPath { Position = StartPosition, Direction = CardinalDirection.East });
@@ -138,7 +138,8 @@ public class LabyrinthMap : Map<LabyrinthCell>
             {
                 Logger.Log($"Shortest path found: {string.Join(", ", path.Moves)}");
                 cost = path.Cost;
-                return path.Moves;
+                moves = path.Moves;
+                return true;
             }
 
             if (curCell.Content == CellType.Wall)
@@ -172,6 +173,7 @@ public class LabyrinthMap : Map<LabyrinthCell>
         
         Logger.Log("Found nothing, that's bad!");
         cost = -1;
-        return null;
+        moves = null;
+        return false;
     }
 }

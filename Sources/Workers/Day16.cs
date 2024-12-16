@@ -15,8 +15,10 @@ public class ReindeerRace : WorkerBase
 
     protected override long WorkOneStar_Implementation()
     {
-        var path = _map.ComputeShortestPath(out var cost);
-        var forwardSteps = path.Count(m => m == ReindeerMove.Forward);
+        var foundPath = _map.ComputeShortestPath(out var moves, out var cost);
+        if (!foundPath)
+            return -1L;
+        
         return cost;
     }
 }
