@@ -127,10 +127,12 @@ public class LabyrinthMap : Map<LabyrinthCell>
     {
         var allPaths = new List<ReindeerPath>();
         allPaths.Add(new ReindeerPath { Position = StartPosition, Direction = CardinalDirection.East });
-        var visitedCells = new List<Tuple<LabyrinthCell, CardinalDirection>>();
+        var visitedCells = new Dictionary<LabyrinthCell, bool[]>();
         while (allPaths.Any())
         {
-            var path = PopBestPath(ref allPaths);
+            var path = allPaths.First();
+            allPaths.RemoveAt(0);
+
             var curCell = GetCell(path.Position);
             if (curCell.Coordinates.Equals(EndPosition))
             {
@@ -145,28 +147,31 @@ public class LabyrinthMap : Map<LabyrinthCell>
                 continue;
             }
 
-            if (visitedCells.Any(v => v.Item1 == curCell && v.Item2 == path.Direction))
+            if (visitedCells.TryGetValue(curCell, out bool[] visited))
             {
-                Logger.Log("Running in circle!");
-                continue;
+                if (visited[(int)path.Direction])
+                {
+                    Logger.Log("Running in circle!");
+                    continue;
+                }
+
+                visited[(int)path.Direction] = true;
             }
-            visitedCells.Add(new Tuple<LabyrinthCell, CardinalDirection>(curCell, path.Direction));
+            else
+            {
+                visitedCells.Add(curCell, new bool[4]);
+                visitedCells[curCell][(int)path.Direction] = true;
+            }
+            
             
             allPaths.Add(path.CreatePathFromHere(ReindeerMove.Forward));
             allPaths.Add(path.CreatePathFromHere(ReindeerMove.TurnRight));
             allPaths.Add(path.CreatePathFromHere(ReindeerMove.TurnLeft));
+            allPaths = allPaths.OrderBy(p => p.Cost).ToList();
         }
         
         Logger.Log("Found nothing, that's bad!");
         cost = -1;
         return null;
-    }
-
-    private ReindeerPath PopBestPath(ref List<ReindeerPath> paths)
-    {
-        var orderedPaths = paths.OrderBy(p => p.Cost);
-        var bestPath = orderedPaths.First();
-        paths.Remove(bestPath);
-        return bestPath;
     }
 }
