@@ -21,6 +21,12 @@ namespace AoC2024_Tests
             Assert.That(work, Is.EqualTo(expectedResult), $"One Star returned {work}, expected {expectedResult}.");
         }
 
+        private void TestOneStar(IWorker worker, string dataPath, string expectedResult)
+        {
+            var work = worker.WorkOneStar_String(dataPath, SeverityLevel.Never);
+            Assert.That(work, Is.EqualTo(expectedResult), $"One Star returned {work}, expected {expectedResult}.");
+        }
+
         private void TestTwoStars(IWorker worker, string dataPath, long expectedResult)
         {
             var work = worker.WorkTwoStars(dataPath, SeverityLevel.Never);
@@ -161,6 +167,17 @@ namespace AoC2024_Tests
             
             TestTwoStars(new AoC2024.Workers.Day16.ReindeerRace(), GetSamplePath(16), 45);
             TestTwoStars(new AoC2024.Workers.Day16.ReindeerRace(), GetSamplePath(16, "_b"), 64);
+        }
+
+        [Test]
+        public void Sample17()
+        {
+            TestOneStar(new AoC2024.Workers.Day17.Compiler(), GetSamplePath(17, "_a"), string.Empty); // B = 1
+            TestOneStar(new AoC2024.Workers.Day17.Compiler(), GetSamplePath(17, "_b"), "0,1,2");
+            TestOneStar(new AoC2024.Workers.Day17.Compiler(), GetSamplePath(17, "_c"), "4,2,5,6,7,7,7,7,3,1,0"); // A = 0
+            TestOneStar(new AoC2024.Workers.Day17.Compiler(), GetSamplePath(17, "_d"), string.Empty); // B = 26
+            TestOneStar(new AoC2024.Workers.Day17.Compiler(), GetSamplePath(17, "_e"), string.Empty); // B = 44354
+            TestOneStar(new AoC2024.Workers.Day17.Compiler(), GetSamplePath(17), "4,6,3,5,6,3,5,2,1,0");
         }
     }
 }
